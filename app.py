@@ -16,6 +16,30 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    section[data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] input {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] .stTextInput > div > div > input {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] .stButton > button {
+        background-color: #d1f0d1 !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] .stMarkdown {
+        color: #000000 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 
 
 # --- LOGO & USER INFO ---
