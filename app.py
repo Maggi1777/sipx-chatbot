@@ -10,7 +10,7 @@ st.set_page_config(page_title="Sipx Chatbot", page_icon="💧", layout="wide")
 # --- LOGO & USER INFO ---
 with st.sidebar:
     logo = Image.open("logo.png")
-    st.image(logo, use_column_width=True)
+    st.image(logo, use_container_width=True)
     st.title("Welcome to Sipx 💧")
     user_name = st.text_input("🧑‍💼 Your Name")
     user_email = st.text_input("📧 Your Email")
