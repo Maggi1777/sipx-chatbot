@@ -1,5 +1,7 @@
 import streamlit as st
 from PIL import Image
+import smtplib
+from email.mime.text import MIMEText
 import re
 
 # --- CONFIG ---
@@ -30,8 +32,8 @@ def calculate_price(text):
     text = text.lower()
     for size in prices:
         if size in text:
-            if "carton" in text or "cotton" in text:
-                match = re.search(r'(\d+)\s*(carton|cotton)', text)
+            if "carton" in text:
+                match = re.search(r'(\d+)\s*carton', text)
                 if match:
                     qty = int(match.group(1))
                     price = prices[size]["carton_price"] * qty
@@ -46,6 +48,21 @@ def calculate_price(text):
                     return f"🧾 Cost of {qty} {size.upper()} bottles is ₹{price}."
     return None
 
+# --- EMAIL LOGIC ---
+def send_email(name, email, question):
+    try:
+        msg = MIMEText(f"User Name: {name}\nEmail: {email}\nQuestion: {question}")
+        msg["Subject"] = "New Query from Sipx Virtual Assistant"
+        msg["From"] = "virtualassistant@sipx.in"
+        msg["To"] = "meghanamaggi1777@gmail.com"
+
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login("your_email@gmail.com", st.secrets["EMAIL_PASSWORD"])
+            server.send_message(msg)
+    except Exception as e:
+        st.error(f"Email failed to send: {e}")
+
 # --- MAIN CHAT INTERFACE ---
 question = st.text_input("How can I assist you today?")
 
@@ -59,7 +76,7 @@ if question:
         st.write("📞 Contact us:\n- Phone: +91 8309620108\n- Email: sipxofficial@gmail.com")
     elif "certificates" in q_lower or "report" in q_lower:
         st.write("📄 Sipx is certified with NABL, ISI, ISO, BIS, and FSSAI. You can find our reports on the website.")
-    elif any(x in q_lower for x in ["price", "cost", "carton", "cotton", "bottle"]):
+    elif any(x in q_lower for x in ["price", "cost", "carton", "bottle"]):
         response = calculate_price(question)
         if response:
             st.write(response)
@@ -74,9 +91,10 @@ if question:
     else:
         st.info("🤖 Sorry, I don't have an answer for that yet. Try asking about our products, prices, or contact info.")
 
-    # --- EMAIL DISABLED FOR NOW ---
-    # if user_name and user_email:
-    #     send_email(user_name, user_email, question)
+    # --- SEND EMAIL TO OWNER ---
+    if user_name and user_email:
+        send_email(user_name, user_email, question)
+
 
 
 
