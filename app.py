@@ -5,6 +5,18 @@ import re
 # --- CONFIG ---
 st.set_page_config(page_title="Sipx Chatbot", page_icon="💧", layout="wide")
 
+# --- CUSTOM CSS FOR WHITE SIDEBAR ---
+st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        background-color: #ffffff;  /* White background */
+    }
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] label, [data-testid="stSidebar"] p {
+        color: #000000 !important;  /* Black text */
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # --- LOGO & USER INFO ---
 with st.sidebar:
     logo = Image.open("logo.png")
@@ -78,6 +90,7 @@ if question:
             )
     else:
         st.info("🤖 Sorry, I don't have an answer for that yet. Try asking about our products, prices, or contact info.")
+
 
 
 
