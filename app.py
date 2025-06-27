@@ -111,7 +111,3 @@ if question:
 
     else:
         st.warning("Sorry, I don't have an answer for that yet. Try asking about our products, pricing, or contact info.")
-
-
-
-
