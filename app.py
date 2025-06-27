@@ -1,7 +1,5 @@
 import streamlit as st
 from PIL import Image
-import smtplib
-from email.mime.text import MIMEText
 import re
 
 # --- CONFIG ---
@@ -22,9 +20,9 @@ st.markdown("<h1 style='text-align: center;'>💬 Sipx Virtual Assistant</h1>", 
 
 # --- PRICING DATA ---
 prices = {
-    "1l": {"carton_price": 130, "bottles_per_carton": 12},
-    "500ml": {"carton_price": 165, "bottles_per_carton": 24},
-    "300ml": {"carton_price": 150, "bottles_per_carton": 24},
+    "1l": {"carton_price": 130, "bottles_per_carton": 12, "per_bottle": 10.83},
+    "500ml": {"carton_price": 165, "bottles_per_carton": 24, "per_bottle": 6.8},
+    "300ml": {"carton_price": 150, "bottles_per_carton": 24, "per_bottle": 5.0},
 }
 
 # --- PRICE CALCULATION LOGIC ---
@@ -32,36 +30,24 @@ def calculate_price(text):
     text = text.lower()
     for size in prices:
         if size in text:
-            if "carton" in text:
-                match = re.search(r'(\d+)\s*carton', text)
-                if match:
-                    qty = int(match.group(1))
-                    price = prices[size]["carton_price"] * qty
-                    total_bottles = prices[size]["bottles_per_carton"] * qty
-                    return f"🧾 Cost of {qty} cartons of {size.upper()} bottles is ₹{price} ({total_bottles} bottles)."
-            elif "bottle" in text:
-                match = re.search(r'(\d+)\s*bottles?', text)
-                if match:
-                    qty = int(match.group(1))
-                    per_bottle_price = prices[size]["carton_price"] / prices[size]["bottles_per_carton"]
-                    price = round(qty * per_bottle_price, 2)
-                    return f"🧾 Cost of {qty} {size.upper()} bottles is ₹{price}."
+            # Check for cartons/cottons
+            match_carton = re.search(r'(\d+)\s*(carton|cotton)', text)
+            if match_carton:
+                qty = int(match_carton.group(1))
+                carton_price = prices[size]["carton_price"]
+                total_price = qty * carton_price
+                bottles = qty * prices[size]["bottles_per_carton"]
+                return f"🧾 {qty} cartons of {size.upper()} contains {bottles} bottles. Total cost: ₹{total_price}."
+            
+            # Check for bottles
+            match_bottles = re.search(r'(\d+)\s*bottles?', text)
+            if match_bottles:
+                qty = int(match_bottles.group(1))
+                per_bottle = prices[size]["per_bottle"]
+                total_price = round(qty * per_bottle, 2)
+                return f"🧾 {qty} {size.upper()} bottles will cost ₹{total_price}."
+
     return None
-
-# --- EMAIL LOGIC ---
-def send_email(name, email, question):
-    try:
-        msg = MIMEText(f"User Name: {name}\nEmail: {email}\nQuestion: {question}")
-        msg["Subject"] = "New Query from Sipx Virtual Assistant"
-        msg["From"] = "virtualassistant@sipx.in"
-        msg["To"] = "meghanamaggi1777@gmail.com"
-
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()
-            server.login("your_email@gmail.com", st.secrets["EMAIL_PASSWORD"])
-            server.send_message(msg)
-    except Exception as e:
-        st.error(f"Email failed to send: {e}")
 
 # --- MAIN CHAT INTERFACE ---
 question = st.text_input("How can I assist you today?")
@@ -76,7 +62,7 @@ if question:
         st.write("📞 Contact us:\n- Phone: +91 8309620108\n- Email: sipxofficial@gmail.com")
     elif "certificates" in q_lower or "report" in q_lower:
         st.write("📄 Sipx is certified with NABL, ISI, ISO, BIS, and FSSAI. You can find our reports on the website.")
-    elif any(x in q_lower for x in ["price", "cost", "carton", "bottle"]):
+    elif any(x in q_lower for x in ["price", "cost", "carton", "cotton", "bottle"]):
         response = calculate_price(question)
         if response:
             st.write(response)
@@ -91,9 +77,6 @@ if question:
     else:
         st.info("🤖 Sorry, I don't have an answer for that yet. Try asking about our products, prices, or contact info.")
 
-    # --- SEND EMAIL TO OWNER ---
-    if user_name and user_email:
-        send_email(user_name, user_email, question)
 
 
 
