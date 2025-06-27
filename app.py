@@ -25,10 +25,10 @@ if name and email:
         elif "sizes" in question_lower:
             st.write("📦 We offer three sizes: 1L, 500ml, and 300ml.")
         elif "contact" in question_lower:
-            st.write("📞 You can contact Sipx at:
-
-- Phone: +91 8309620108
-- Email: sipxofficial@gmail.com")
+            st.write("""📞 You can contact Sipx at:
+        - Phone: +91 8309620108
+        - Email: sipxofficial@gmail.com
+        """)        
         elif "certificate" in question_lower:
             st.write("✅ We hold NABL, ISI, ISO, FSSAI & BIS certifications.")
         elif "about" in question_lower or "mission" in question_lower:
