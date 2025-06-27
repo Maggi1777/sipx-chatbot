@@ -46,18 +46,19 @@ st.markdown("""
         color: #000000 !important;
     }
 
-    /* Success box (like "Hello, Megha 👋") */
+    /* Success box ("Hello" message) */
     section[data-testid="stSidebar"] .stAlert-success {
-        background-color: #ffffff !important;
+        background-color: #d1f0d1 !important;
         color: #000000 !important;
         border: 1px solid #a3e6a3 !important;
     }
+
+    /* Text inside success box */
+    section[data-testid="stSidebar"] .stAlert-success div {
+        color: #000000 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
-
-
-
-
 # --- LOGO & USER INFO ---
 with st.sidebar:
     logo = Image.open("logo.png")
