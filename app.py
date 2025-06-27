@@ -10,7 +10,6 @@ st.set_page_config(page_title="Sipx Virtual Assistant", page_icon="💧", layout
 with st.sidebar:
     logo = Image.open("logo.png")
     st.image(logo, use_column_width=True)
-    st.sidebar.image(logo, use_column_width=True)
     st.title("Welcome to Sipx 💧")
     st.markdown("Please enter your details")
     user_name = st.text_input("🧑‍💼 Your Name")
