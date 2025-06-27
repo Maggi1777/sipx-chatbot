@@ -48,7 +48,7 @@ st.markdown("""
 
     /* Success box (like "Hello, Megha 👋") */
     section[data-testid="stSidebar"] .stAlert-success {
-        background-color: #d1f0d1 !important;
+        background-color: #ffffff !important;
         color: #000000 !important;
         border: 1px solid #a3e6a3 !important;
     }
