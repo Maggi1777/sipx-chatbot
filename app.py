@@ -27,25 +27,28 @@ prices = {
 
 # --- PRICE CALCULATION LOGIC ---
 def calculate_price(text):
-    text = text.lower()
+    text = text.lower().replace(" ", "")
+    size_match = None
     for size in prices:
         if size in text:
-            # Check for cartons/cottons
-            match_carton = re.search(r'(\d+)\s*(carton|cotton)', text)
-            if match_carton:
-                qty = int(match_carton.group(1))
-                carton_price = prices[size]["carton_price"]
-                total_price = qty * carton_price
-                bottles = qty * prices[size]["bottles_per_carton"]
-                return f"🧾 {qty} cartons of {size.upper()} contains {bottles} bottles. Total cost: ₹{total_price}."
-            
-            # Check for bottles
-            match_bottles = re.search(r'(\d+)\s*bottles?', text)
-            if match_bottles:
-                qty = int(match_bottles.group(1))
-                per_bottle = prices[size]["per_bottle"]
-                total_price = round(qty * per_bottle, 2)
-                return f"🧾 {qty} {size.upper()} bottles will cost ₹{total_price}."
+            size_match = size
+            break
+
+    if size_match:
+        carton_match = re.search(r'(\d+)(carton|cotton)', text)
+        if carton_match:
+            qty = int(carton_match.group(1))
+            carton_price = prices[size_match]["carton_price"]
+            total_price = qty * carton_price
+            bottles = qty * prices[size_match]["bottles_per_carton"]
+            return f"🧾 {qty} cartons of {size_match.upper()} contains {bottles} bottles. Total cost: ₹{total_price}."
+
+        bottle_match = re.search(r'(\d+)bottles?', text)
+        if bottle_match:
+            qty = int(bottle_match.group(1))
+            per_bottle = prices[size_match]["per_bottle"]
+            total_price = round(qty * per_bottle, 2)
+            return f"🧾 {qty} {size_match.upper()} bottles will cost ₹{total_price}."
 
     return None
 
@@ -55,7 +58,6 @@ question = st.text_input("How can I assist you today?")
 if question:
     q_lower = question.lower()
 
-    # --- Respond to FAQs ---
     if "what is sipx" in q_lower:
         st.write("💧 Sipx is a packaged drinking water brand that delivers clean, safe, and sustainable water. We offer 1L, 500ml, and 300ml bottles with a focus on community impact and health.")
     elif "contact" in q_lower:
@@ -63,7 +65,7 @@ if question:
     elif "certificates" in q_lower or "report" in q_lower:
         st.write("📄 Sipx is certified with NABL, ISI, ISO, BIS, and FSSAI. You can find our reports on the website.")
     elif any(x in q_lower for x in ["price", "cost", "carton", "cotton", "bottle"]):
-        response = calculate_price(question)
+        response = calculate_price(q_lower)
         if response:
             st.write(response)
         else:
@@ -76,6 +78,7 @@ if question:
             )
     else:
         st.info("🤖 Sorry, I don't have an answer for that yet. Try asking about our products, prices, or contact info.")
+
 
 
 
