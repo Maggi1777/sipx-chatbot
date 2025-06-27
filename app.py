@@ -18,27 +18,43 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown("""
     <style>
+    /* Sidebar background and text */
     section[data-testid="stSidebar"] {
         background-color: #ffffff !important;
         color: #000000 !important;
     }
+
+    /* Input fields */
     section[data-testid="stSidebar"] input {
         background-color: #ffffff !important;
         color: #000000 !important;
     }
+
     section[data-testid="stSidebar"] .stTextInput > div > div > input {
         background-color: #ffffff !important;
         color: #000000 !important;
     }
+
+    /* Buttons */
     section[data-testid="stSidebar"] .stButton > button {
         background-color: #d1f0d1 !important;
         color: #000000 !important;
     }
+
+    /* Markdown/general text */
     section[data-testid="stSidebar"] .stMarkdown {
         color: #000000 !important;
     }
+
+    /* Success box (like "Hello, Megha 👋") */
+    section[data-testid="stSidebar"] .stAlert-success {
+        background-color: #d1f0d1 !important;
+        color: #000000 !important;
+        border: 1px solid #a3e6a3 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 
 
 
