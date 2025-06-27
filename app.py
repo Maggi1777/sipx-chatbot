@@ -1,113 +1,93 @@
 import streamlit as st
 from PIL import Image
+import re
 
-# --- PAGE CONFIG ---
-st.set_page_config(page_title="Sipx Virtual Assistant", layout="wide")
+# --- CONFIG ---
+st.set_page_config(page_title="Sipx Chatbot", page_icon="💧", layout="wide")
 
-# --- SIDEBAR STYLING ---
+# --- CUSTOM CSS FOR WHITE SIDEBAR ---
 st.markdown("""
     <style>
-    section[data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        color: #000000 !important;
+    [data-testid="stSidebar"] {
+        background-color: #ffffff;  /* White background */
     }
-    section[data-testid="stSidebar"] input {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    section[data-testid="stSidebar"] .stTextInput > div > div > input {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    section[data-testid="stSidebar"] .stButton > button {
-        background-color: #d1f0d1 !important;
-        color: #000000 !important;
-    }
-    section[data-testid="stSidebar"] .stMarkdown {
-        color: #000000 !important;
-    }
-    section[data-testid="stSidebar"] .stAlert-success {
-        background-color: #d1f0d1 !important;
-        color: #000000 !important;
-        border: 1px solid #a3e6a3 !important;
-    }
-    section[data-testid="stSidebar"] .stAlert-success div {
-        color: #000000 !important;
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] label, [data-testid="stSidebar"] p {
+        color: #000000 !important;  /* Black text */
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR CONTENT ---
+# --- LOGO & USER INFO ---
 with st.sidebar:
-    logo = Image.open("logo.png")  # Make sure logo.png is in the same folder
-    st.image(logo, use_column_width=True)
+    logo = Image.open("logo.png")
+    st.image(logo, use_container_width=True)
     st.title("Welcome to Sipx 💧")
-    name = st.text_input("🧑‍💼 Your Name")
-    email = st.text_input("📧 Your Email")
-    if name and email:
-        st.success(f"Hello, {name} 👋")
+    user_name = st.text_input("🧑‍💼 Your Name")
+    user_email = st.text_input("📧 Your Email")
+    if user_name and user_email:
+        st.success(f"Hello, {user_name} 👋")
 
-# --- MAIN AREA ---
-st.title("💬 Sipx Virtual Assistant")
-st.write("How can I assist you today?")
-
-question = st.text_input("")
+# --- BOT TITLE ---
+st.markdown("<h1 style='text-align: center;'>💬 Sipx Virtual Assistant</h1>", unsafe_allow_html=True)
 
 # --- PRICING DATA ---
-pricing = {
-    "1l": {"carton_price": 130, "bottles_per_carton": 12},
-    "500ml": {"carton_price": 165, "bottles_per_carton": 24},
-    "300ml": {"carton_price": 150, "bottles_per_carton": 24}
+prices = {
+    "1l": {"carton_price": 130, "bottles_per_carton": 12, "per_bottle": 10.83},
+    "500ml": {"carton_price": 165, "bottles_per_carton": 24, "per_bottle": 6.8},
+    "300ml": {"carton_price": 150, "bottles_per_carton": 24, "per_bottle": 5.0},
 }
 
-def calculate_carton_cost(q, bottle_type):
-    import re
-    match = re.search(r'(\d+)\s*cartons?', q)
-    if match:
-        count = int(match.group(1))
-        bottle = pricing[bottle_type]
-        total_bottles = count * bottle["bottles_per_carton"]
-        total_cost = count * bottle["carton_price"]
-        return f"📦 {count} cartons of {bottle_type.upper()} contains {total_bottles} bottles. Total cost: ₹{total_cost}."
+# --- PRICE CALCULATION LOGIC ---
+def calculate_price(text):
+    text = text.lower().replace(" ", "")
+    size_match = None
+    for size in prices:
+        if size in text:
+            size_match = size
+            break
+
+    if size_match:
+        carton_match = re.search(r'(\d+)(carton|cotton)', text)
+        if carton_match:
+            qty = int(carton_match.group(1))
+            carton_price = prices[size_match]["carton_price"]
+            total_price = qty * carton_price
+            bottles = qty * prices[size_match]["bottles_per_carton"]
+            return f"🧾 {qty} cartons of {size_match.upper()} contains {bottles} bottles. Total cost: ₹{total_price}."
+
+        bottle_match = re.search(r'(\d+)bottles?', text)
+        if bottle_match:
+            qty = int(bottle_match.group(1))
+            per_bottle = prices[size_match]["per_bottle"]
+            total_price = round(qty * per_bottle, 2)
+            return f"🧾 {qty} {size_match.upper()} bottles will cost ₹{total_price}."
+
     return None
 
+# --- MAIN CHAT INTERFACE ---
+question = st.text_input("How can I assist you today?")
+
 if question:
-    question_lower = question.lower()
+    q_lower = question.lower()
 
-    # Custom Questions
-    if "what is sipx" in question_lower:
-        st.write("💧 Sipx is a premium packaged drinking water brand that delivers clean, safe, and pure water to customers. We focus on sustainability, hydration tech, and community impact.")
-
-    elif "contact" in question_lower or "phone" in question_lower or "email" in question_lower:
-        st.markdown("📞 You can contact Sipx at:")
-        st.write("- **Phone:** +91 8309620108")
-        st.write("- **Email:** [sipxofficial@gmail.com](mailto:sipxofficial@gmail.com)")
-
-    elif "price" in question_lower or "cost" in question_lower:
-        bottle_found = False
-        for key in pricing:
-            if key in question_lower:
-                answer = calculate_carton_cost(question_lower, key)
-                if answer:
-                    st.write(answer)
-                else:
-                    st.markdown(f"""
-                    💧 **Our Pricing:**
-                    - 1L: ₹130/carton (12 bottles) — ₹10.83/bottle  
-                    - 500ml: ₹165/carton (24 bottles) — ₹6.80/bottle  
-                    - 300ml: ₹150/carton (24 bottles) — ₹5.00/bottle  
-                    \nPrices may vary based on order quantity.
-                    """)
-                bottle_found = True
-                break
-        if not bottle_found:
-            st.markdown(f"""
-            💧 **Our Pricing:**
-            - 1L: ₹130/carton (12 bottles) — ₹10.83/bottle  
-            - 500ml: ₹165/carton (24 bottles) — ₹6.80/bottle  
-            - 300ml: ₹150/carton (24 bottles) — ₹5.00/bottle  
-            \nPrices may vary based on order quantity.
-            """)
-
+    if "what is sipx" in q_lower:
+        st.write("💧 Sipx is a packaged drinking water brand that delivers clean, safe, and sustainable water. We offer 1L, 500ml, and 300ml bottles with a focus on community impact and health.")
+    elif "contact" in q_lower:
+        st.write("📞 Contact us:\n- Phone: +91 8309620108\n- Email: sipxofficial@gmail.com")
+    elif "certificates" in q_lower or "report" in q_lower:
+        st.write("📄 Sipx is certified with NABL, ISI, ISO, BIS, and FSSAI. You can find our reports on the website.")
+    elif any(x in q_lower for x in ["price", "cost", "carton", "cotton", "bottle"]):
+        response = calculate_price(q_lower)
+        if response:
+            st.write(response)
+        else:
+            st.write(
+                "💧 Our Pricing:\n"
+                "- 1L: ₹130/carton (12 bottles) — ₹10.83/bottle\n"
+                "- 500ml: ₹165/carton (24 bottles) — ₹6.80/bottle\n"
+                "- 300ml: ₹150/carton (24 bottles) — ₹5.00/bottle\n"
+                "*Prices may vary based on order quantity.*"
+            )
     else:
-        st.warning("Sorry, I don't have an answer for that yet. Try asking about our products, pricing, or contact info.")
+        st.info("🤖 Sorry, I don't have an answer for that yet. Try asking about our products, prices, or contact info.")
+
