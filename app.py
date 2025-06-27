@@ -17,14 +17,25 @@ with st.sidebar:
     else:
         st.warning("Please fill out your name and email to begin.")
 
-# Bottle prices per unit
+# Pricing and quantities
 prices_per_bottle = {
     "1l": 10.83,
     "500ml": 6.80,
     "300ml": 5.00
 }
 
-# Extract number from question
+prices_per_carton = {
+    "1l": 130,      # 12 bottles
+    "500ml": 165,   # 24 bottles
+    "300ml": 150    # 24 bottles
+}
+
+bottles_per_carton = {
+    "1l": 12,
+    "500ml": 24,
+    "300ml": 24
+}
+
 def extract_number(text):
     match = re.search(r"\d+", text)
     return int(match.group()) if match else None
@@ -36,34 +47,20 @@ if user_name and user_email:
         question_lower = question.lower()
 
         if "price" in question_lower and "1l" in question_lower:
-            st.write("""🧾 1 Litre Bottle:
-- ₹130 per carton (12 bottles)
-- ₹10.83 per bottle
-
-📌 *Prices may vary depending on the quantity ordered.*""")
+            st.write("🧾 1L Bottle: ₹130 per carton (12 bottles) — ₹10.83 each")
 
         elif "price" in question_lower and "500" in question_lower:
-            st.write("""🧾 500ml Bottle:
-- ₹165 per carton (24 bottles)
-- ₹6.80 per bottle
-
-📌 *Prices may vary depending on the quantity ordered.*""")
+            st.write("🧾 500ml Bottle: ₹165 per carton (24 bottles) — ₹6.80 each")
 
         elif "price" in question_lower and "300" in question_lower:
-            st.write("""🧾 300ml Bottle:
-- ₹150 per carton (24 bottles)
-- ₹5.00 per bottle
-
-📌 *Prices may vary depending on the quantity ordered.*""")
+            st.write("🧾 300ml Bottle: ₹150 per carton (24 bottles) — ₹5.00 each")
 
         elif "price" in question_lower or "cost" in question_lower:
-            st.write("""💧 Our Pricing (may vary by quantity):
+            st.write("""💧 Our Pricing:
 
-- **1L:** ₹130/carton (12 bottles) — ₹10.83/bottle  
-- **500ml:** ₹165/carton (24 bottles) — ₹6.80/bottle  
-- **300ml:** ₹150/carton (24 bottles) — ₹5.00/bottle
-
-📞 For bulk orders, contact: +91 8309620108""")
+- 1L: ₹130/carton (12) — ₹10.83/bottle  
+- 500ml: ₹165/carton (24) — ₹6.80/bottle  
+- 300ml: ₹150/carton (24) — ₹5.00/bottle""")
 
         elif "contact" in question_lower:
             st.write("""📞 You can contact Sipx at:
@@ -71,74 +68,78 @@ if user_name and user_email:
 - Phone: +91 8309620108  
 - Email: sipxofficial@gmail.com""")
 
-        elif "certificates" in question_lower or "report" in question_lower:
-            st.write("""📄 We provide NABL, ISI, ISO, FSSAI certificates along with monthly, quarterly, and annual BIS lab reports.""")
+        elif "certificate" in question_lower or "report" in question_lower:
+            st.write("📄 We offer NABL, ISI, ISO, FSSAI certificates, and BIS lab reports (monthly, quarterly, annually).")
 
         elif "composition" in question_lower or "minerals" in question_lower:
-            st.write("""🧪 Our water includes:
+            st.write("""🧪 Water Composition:
 - Magnesium – Strength & Energy  
 - Sulfate – Detox & Digestion  
 - Potassium – Heart & Hydration  
 - Bicarbonate – pH Balance  
-- Calcium – Bone & Teeth Strength  
+- Calcium – Bone Strength  
 - Chloride – Fluid Balance""")
 
         elif "what is sipx" in question_lower or "who are you" in question_lower:
-            st.write("""💧 Sipx is a premium packaged drinking water brand dedicated to delivering clean, safe, and sustainable hydration. We don’t just sell water — we deliver trust, health, and care in every bottle.""")
-
-        elif "mission" in question_lower or "vision" in question_lower:
-            st.write("""🌍 Our mission is to bring pure, life-changing water to every individual. Every Sipx bottle supports health, sustainability, and community upliftment.""")
-
-        elif "values" in question_lower or "goal" in question_lower:
-            st.write("""❤️ At Sipx, we value purity, sustainability, and community impact. Our water is 100% safe, our packaging is recyclable, and our mission is rooted in social good.""")
+            st.write("""💧 Sipx is a premium packaged drinking water brand. We deliver safe, clean, and sustainable hydration with every bottle. Our mission is to make clean water a basic right for everyone.""")
 
         elif "sustainability" in question_lower or "eco" in question_lower:
-            st.write("""♻️ We use 100% recyclable packaging and support waste management and drought-relief efforts. Every bottle contributes to a greener planet.""")
+            st.write("♻️ Our packaging is 100% recyclable. We support waste management and drought relief efforts.")
 
-        elif "order" in question_lower and "5" in question_lower and "1l" in question_lower:
-            st.write("""🧾 5 Cartons of 1L Bottles:
-- ₹130 × 5 = ₹650  
-- 60 bottles total (12 per carton)
+        elif "mission" in question_lower or "goal" in question_lower:
+            st.write("🌍 Our mission: bring pure, life-changing water to everyone. Every Sipx bottle fuels health and hope.")
 
-📌 *Confirm final pricing and delivery with Sipx.*""")
-
-        elif "cost" in question_lower and "60" in question_lower and "1l" in question_lower:
-            st.write("""🧾 60 × 1L Bottles = ₹649.80 (₹10.83 each)  
-📦 Equals 5 cartons
-
-📌 *Prices may vary slightly with bulk orders.*""")
-
-        elif any(x in question_lower for x in ["cost of", "price of", "total for"]) and any(x in question_lower for x in ["bottle", "carton", "bottles", "cartons"]):
+        # 👉 Carton Calculation
+        elif "carton" in question_lower and "cost" in question_lower or "price" in question_lower:
             amount = extract_number(question_lower)
-            if "1l" in question_lower:
-                total = round(amount * prices_per_bottle["1l"], 2)
-                st.write(f"🧾 {amount} × 1L bottles = ₹{total}")
-            elif "500" in question_lower:
-                total = round(amount * prices_per_bottle["500ml"], 2)
-                st.write(f"🧾 {amount} × 500ml bottles = ₹{total}")
-            elif "300" in question_lower:
-                total = round(amount * prices_per_bottle["300ml"], 2)
-                st.write(f"🧾 {amount} × 300ml bottles = ₹{total}")
+            if amount:
+                if "1l" in question_lower:
+                    total = prices_per_carton["1l"] * amount
+                    st.write(f"🧾 {amount} × 1L cartons = ₹{total} ({amount * bottles_per_carton['1l']} bottles)")
+                elif "500" in question_lower:
+                    total = prices_per_carton["500ml"] * amount
+                    st.write(f"🧾 {amount} × 500ml cartons = ₹{total} ({amount * bottles_per_carton['500ml']} bottles)")
+                elif "300" in question_lower:
+                    total = prices_per_carton["300ml"] * amount
+                    st.write(f"🧾 {amount} × 300ml cartons = ₹{total} ({amount * bottles_per_carton['300ml']} bottles)")
+                else:
+                    st.warning("Mention size (1L, 500ml, 300ml) to calculate carton cost.")
             else:
-                st.warning("⚠️ Please mention bottle size (1L / 500ml / 300ml) to calculate cost.")
+                st.warning("Couldn’t find number of cartons.")
 
-        elif "how many" in question_lower and "for ₹" in question_lower:
+        # 👉 Bottle Quantity Cost
+        elif any(x in question_lower for x in ["cost of", "price of", "total for", "how much for", "how many"]) and any(x in question_lower for x in ["bottle", "carton", "bottles", "cartons", "₹", "rs"]):
             amount = extract_number(question_lower)
-            if "1l" in question_lower:
-                count = int(amount / prices_per_bottle["1l"])
-                st.write(f"💧 For ₹{amount}, you can get approximately {count} × 1L bottles.")
-            elif "500" in question_lower:
-                count = int(amount / prices_per_bottle["500ml"])
-                st.write(f"💧 For ₹{amount}, you can get approximately {count} × 500ml bottles.")
-            elif "300" in question_lower:
-                count = int(amount / prices_per_bottle["300ml"])
-                st.write(f"💧 For ₹{amount}, you can get approximately {count} × 300ml bottles.")
+
+            if amount:
+                if "1l" in question_lower or "1 l" in question_lower:
+                    if "₹" in question_lower or "rs" in question_lower:
+                        count = int(amount / prices_per_bottle["1l"])
+                        st.write(f"💧 For ₹{amount}, you get approx **{count} × 1L bottles**.")
+                    else:
+                        total = round(amount * prices_per_bottle["1l"], 2)
+                        st.write(f"🧾 {amount} × 1L bottles = ₹{total}")
+                elif "500" in question_lower:
+                    if "₹" in question_lower or "rs" in question_lower:
+                        count = int(amount / prices_per_bottle["500ml"])
+                        st.write(f"💧 For ₹{amount}, you get approx **{count} × 500ml bottles**.")
+                    else:
+                        total = round(amount * prices_per_bottle["500ml"], 2)
+                        st.write(f"🧾 {amount} × 500ml bottles = ₹{total}")
+                elif "300" in question_lower:
+                    if "₹" in question_lower or "rs" in question_lower:
+                        count = int(amount / prices_per_bottle["300ml"])
+                        st.write(f"💧 For ₹{amount}, you get approx **{count} × 300ml bottles**.")
+                    else:
+                        total = round(amount * prices_per_bottle["300ml"], 2)
+                        st.write(f"🧾 {amount} × 300ml bottles = ₹{total}")
+                else:
+                    st.warning("⚠️ Please mention bottle size (1L / 500ml / 300ml).")
             else:
-                st.warning("⚠️ Please mention bottle size (1L / 500ml / 300ml) to calculate quantity.")
+                st.warning("⚠️ Couldn’t detect a valid number in your question.")
 
         else:
-            st.warning("🤖 Sorry, I don't have an answer for that yet. Try asking about our bottles, prices, or contact info.")
+            st.warning("🤖 Sorry, I don't have an answer for that yet. Try asking about pricing, bottles, or contact info.")
 
 else:
-    st.info("Fill in your name and email in the sidebar to start chatting.")
-
+    st.info("Please enter your name and email to start chatting.")
