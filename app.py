@@ -1,10 +1,10 @@
 import streamlit as st
 from PIL import Image
+import re
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Sipx Virtual Assistant", layout="wide")
 
-# --- SIDEBAR STYLING ---
 # --- SIDEBAR STYLING ---
 st.markdown("""
     <style>
@@ -27,60 +27,76 @@ st.markdown("""
     section[data-testid="stSidebar"] .stMarkdown {
         color: #000000 !important;
     }
-    div[data-testid="stSidebarUserContent"] p {
-        color: #000000 !important;
-    }
     </style>
 """, unsafe_allow_html=True)
-
 
 # --- LOGO ---
 logo = Image.open("logo.png")
 st.sidebar.image(logo, use_container_width=True)
 
-# --- SIDEBAR INPUT ---
-st.sidebar.title("Welcome to Sipx💧")
-user_name = st.sidebar.text_input("🧑 Your Name")
-user_email = st.sidebar.text_input("📧 Your Email")
+# --- USER INPUT FORM ---
+st.sidebar.markdown("## Welcome to Sipx 💧")
+name = st.sidebar.text_input("\U0001F464 Your Name")
+email = st.sidebar.text_input("\U0001F4F7 Your Email")
 
-if user_name and user_email:
-    st.sidebar.success(f"Hello, {user_name} 👋", icon="✅")
+if name and email:
+    st.sidebar.success(f"Hello, {name}! 👋")
 
-# --- MAIN UI ---
-st.title("💬 Sipx Virtual Assistant")
-query = st.text_input("How can I assist you today?")
+# --- MAIN TITLE ---
+st.markdown("""
+    <h1 style='text-align: center;'>💬 Sipx Virtual Assistant</h1>
+""", unsafe_allow_html=True)
 
-# --- PRICING INFO ---
+# --- USER QUERY ---
+user_input = st.text_input("How can I assist you today?")
+
+# --- Pricing Info ---
 pricing = {
-    "1L": {"carton_price": 130, "bottles_per_carton": 12},
-    "500ml": {"carton_price": 165, "bottles_per_carton": 24},
-    "300ml": {"carton_price": 150, "bottles_per_carton": 24}
+    "1l": {"cost_per_carton": 130, "bottles_per_carton": 12},
+    "500ml": {"cost_per_carton": 165, "bottles_per_carton": 24},
+    "300ml": {"cost_per_carton": 150, "bottles_per_carton": 24}
 }
 
-def calculate_carton_cost(query):
-    import re
-    pattern = re.search(r'(\d+)\s+cartons?\s+of\s+(\d+)\s*ml', query.lower())
-    if pattern:
-        cartons = int(pattern.group(1))
-        size = pattern.group(2) + "ml"
-        if size in pricing:
-            carton_price = pricing[size]["carton_price"]
-            bottles = pricing[size]["bottles_per_carton"]
-            total_bottles = cartons * bottles
-            total_cost = cartons * carton_price
-            return f"📦 {cartons} cartons of {size.upper()} contains {total_bottles} bottles. Total cost: ₹{total_cost}."
-    return None
+# --- Chatbot Response ---
+if user_input:
+    user_input_lower = user_input.lower()
+    response = ""
 
-# --- RESPONSE ---
-if query:
-    calc_result = calculate_carton_cost(query)
-    if calc_result:
-        st.success(calc_result)
+    match = re.search(r"(\d+)\s+cartons?\s+of\s+(\d+ml|1l)", user_input_lower)
+    if match:
+        num_cartons = int(match.group(1))
+        size = match.group(2)
+
+        if size in pricing:
+            cost_per_carton = pricing[size]["cost_per_carton"]
+            bottles_per_carton = pricing[size]["bottles_per_carton"]
+            total_bottles = num_cartons * bottles_per_carton
+            total_cost = num_cartons * cost_per_carton
+
+            response = f"📦 {num_cartons} cartons of {size.upper()} contain {total_bottles} bottles. Total cost: ₹{total_cost}."
+        else:
+            response = "❌ Sorry, I couldn't identify that bottle size. Please ask about 1L, 500ml, or 300ml."
+
+    elif "price" in user_input_lower or "cost" in user_input_lower:
+        response = (
+            "💧 Our Pricing:\n\n"
+            "• 1L: ₹130/carton (12 bottles) — ₹10.83/bottle\n"
+            "• 500ml: ₹165/carton (24 bottles) — ₹6.80/bottle\n"
+            "• 300ml: ₹150/carton (24 bottles) — ₹5.00/bottle\n"
+            "_Prices may vary based on order quantity._"
+        )
     else:
-        st.markdown("💧 **Our Pricing:**")
-        for size, info in pricing.items():
-            per_bottle = info["carton_price"] / info["bottles_per_carton"]
-            st.markdown(f"- {size}: ₹{info['carton_price']}/carton ({info['bottles_per_carton']} bottles) — ₹{per_bottle:.2f}/bottle")
-        st.caption("Prices may vary based on order quantity.")
+        response = "🤖 I'm here to help with pricing, bottle sizes, certifications, and more. Try asking: 'What is the cost of 7 cartons of 300ml bottle?'"
+
+    st.write(response)
+
+# --- Contact Info ---
+st.markdown("""
+---
+### 📞 You can contact Sipx at:
+- **Phone**: +91 8309620108  
+- **Email**: [sipxofficial@gmail.com](mailto:sipxofficial@gmail.com)
+""")
+
         
 
