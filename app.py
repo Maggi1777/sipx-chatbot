@@ -19,7 +19,7 @@ st.markdown("""
 
 # --- LOGO & USER INFO ---
 with st.sidebar:
-    logo = Image.open("logo.png")
+    logo = Image.open("logo1.svg")
     st.image(logo, use_container_width=True)
     st.title("Welcome to Sipx 💧")
     user_name = st.text_input("🧑‍💼 Your Name")
