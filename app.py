@@ -21,7 +21,7 @@ st.markdown("""
         color: #000000 !important;
     }
     section[data-testid="stSidebar"] .stButton > button {
-        background-color: #ffffff  !important;
+        background-color: #d1f0d1 !important;
         color: #000000 !important;
     }
     section[data-testid="stSidebar"] .stMarkdown {
@@ -31,8 +31,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- LOGO ---
-logo = Image.open("logo.png")
-st.sidebar.image(logo, use_container_width=True)
+try:
+    logo = Image.open("logo.png")
+    st.sidebar.image(logo, use_container_width=True)
+except:
+    st.sidebar.warning("Logo not found. Please upload logo.png.")
 
 # --- USER INPUT FORM ---
 st.sidebar.markdown("## Welcome to Sipx 💧")
@@ -40,7 +43,7 @@ name = st.sidebar.text_input("\U0001F464 Your Name")
 email = st.sidebar.text_input("\U0001F4F7 Your Email")
 
 if name and email:
-    st.sidebar.success(f"Hello, {name}! 👋")
+    st.sidebar.markdown(f"<p style='color:black;'>Hello, {name}! 👋</p>", unsafe_allow_html=True)
 
 # --- MAIN TITLE ---
 st.markdown("""
@@ -77,29 +80,39 @@ if user_input:
         else:
             response = "❌ Sorry, I couldn't identify that bottle size. Please ask about 1L, 500ml, or 300ml."
 
+    elif "what is sipx" in user_input_lower or "about sipx" in user_input_lower:
+        response = (
+            "💧 **Sipx** is a packaged drinking water company delivering clean, safe, and pure water.\n"
+            "We believe every drop can change a life.\n\n"
+            "- 1L, 500ml, and 300ml bottles available\n"
+            "- Sustainability and health in every sip\n"
+            "- Supporting communities with clean water access"
+        )
+
+    elif "contact" in user_input_lower or "reach" in user_input_lower:
+        response = "📞 You can contact Sipx at +91 8309620108 or email sipxofficial@gmail.com"
+
+    elif "sizes" in user_input_lower or "available" in user_input_lower:
+        response = "📦 We offer 3 bottle sizes: 1L, 500ml, and 300ml."
+
+    elif "certificates" in user_input_lower or "reports" in user_input_lower:
+        response = "📑 We provide NABL, ISI, ISO, FSSAI, and BIS lab reports."
+
     elif "price" in user_input_lower or "cost" in user_input_lower:
         response = (
             "💧 Our Pricing:\n\n"
             "• 1L: ₹130/carton (12 bottles) — ₹10.83/bottle\n"
             "• 500ml: ₹165/carton (24 bottles) — ₹6.80/bottle\n"
-            "• 300ml: ₹150/carton (24 bottles) — ₹5.00/bottle\n"
-            "_Prices may vary based on order quantity._"
+            "• 300ml: ₹150/carton (24 bottles) — ₹5.00/bottle\n\n"
+            "_Prices may vary based on order quantity._\n\n"
+            "You can also ask something like 'Cost of 5 cartons of 500ml bottles' for an exact amount."
         )
-    elif "what is sipx" in user_input_lower or "about sipx" in user_input_lower:
-        response = (
-              "💧 **Sipx** is a packaged drinking water company dedicated to delivering clean, safe, and pure water in every bottle. "
-              "At Sipx, we believe:\n\n"
-              "- Every drop can change a life\n"
-              "- Clean water is a basic human right\n"
-              "- Every Sipx bottle represents trust, health, and sustainability\n\n"
-              "We offer three sizes: 1L, 500ml, 300ml.\n\n"
-              "Each bottle supports our mission to bring hope, hydration, and health to the world's driest corners."
-        
-    )
-      
 
     else:
-        response = "🤖 I'm here to help with pricing, bottle sizes, certifications, and more. Try asking: 'What is the cost of 7 cartons of 300ml bottle?'"
+        response = (
+            "🤖 Sorry, I don't have an answer for that yet.\n\n"
+            "Try asking about our pricing, bottle sizes, contact info, or certifications."
+        )
 
     st.write(response)
 
