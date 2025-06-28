@@ -5,26 +5,34 @@ from PIL import Image
 st.set_page_config(page_title="Sipx Virtual Assistant", page_icon="💧", layout="centered")
 
 # --- Custom CSS Styling ---
+# --- Custom CSS Styling ---
 st.markdown("""
     <style>
-        /* White sidebar background */
-        section[data-testid="stSidebar"] {
-            background-color: white !important;
+        /* Make sidebar white */
+        [data-testid="stSidebar"] {
+            background-color: #ffffff !important;
+            color: #000000 !important;
         }
 
-        /* Black text input styling */
-        section[data-testid="stSidebar"] input {
+        /* Input text (name, email) to black */
+        [data-testid="stSidebar"] input {
             color: black !important;
         }
 
-        /* Change the hello message */
+        /* Change "Hello" message text color */
         .hello-text {
             color: black;
             font-weight: bold;
             font-size: 18px;
         }
+
+        /* Force button text to black */
+        [data-testid="stSidebar"] button {
+            color: black !important;
+        }
     </style>
 """, unsafe_allow_html=True)
+
 
 # --- Sidebar content ---
 with st.sidebar:
