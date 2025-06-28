@@ -21,7 +21,7 @@ st.markdown("""
         color: #000000 !important;
     }
     section[data-testid="stSidebar"] .stButton > button {
-        background-color: #d1f0d1 !important;
+        background-color: #ffffff  !important;
         color: #000000 !important;
     }
     section[data-testid="stSidebar"] .stMarkdown {
@@ -85,6 +85,19 @@ if user_input:
             "• 300ml: ₹150/carton (24 bottles) — ₹5.00/bottle\n"
             "_Prices may vary based on order quantity._"
         )
+    elif "what is sipx" in user_input_lower or "about sipx" in user_input_lower:
+        response = (
+              "💧 **Sipx** is a packaged drinking water company dedicated to delivering clean, safe, and pure water in every bottle. "
+              "At Sipx, we believe:\n\n"
+              "- Every drop can change a life\n"
+              "- Clean water is a basic human right\n"
+              "- Every Sipx bottle represents trust, health, and sustainability\n\n"
+              "We offer three sizes: 1L, 500ml, 300ml.\n\n"
+              "Each bottle supports our mission to bring hope, hydration, and health to the world's driest corners."
+        
+    )
+      
+
     else:
         response = "🤖 I'm here to help with pricing, bottle sizes, certifications, and more. Try asking: 'What is the cost of 7 cartons of 300ml bottle?'"
 
