@@ -95,7 +95,7 @@ if user_input:
     elif "sizes" in user_input_lower or "available" in user_input_lower:
         response = "📦 We offer 3 bottle sizes: 1L, 500ml, and 300ml."
 
-    elif "certificates" in user_input_lower or "reports" in user_input_lower:
+    elif "certifications/certificates" in user_input_lower or "reports" in user_input_lower:
         response = "📑 We provide NABL, ISI, ISO, FSSAI, and BIS lab reports."
 
     elif "price" in user_input_lower or "cost" in user_input_lower:
