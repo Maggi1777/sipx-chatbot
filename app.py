@@ -19,7 +19,7 @@ st.markdown("""
         }
 
         [data-testid="stSidebar"] button {
-            background-color: #d1f0d1 !important;
+            background-color: #ffffff !important;
             color: #000000 !important;
         }
 
