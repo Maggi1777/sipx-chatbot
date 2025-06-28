@@ -5,42 +5,41 @@ from PIL import Image
 st.set_page_config(page_title="Sipx Virtual Assistant", layout="wide")
 
 # --- SIDEBAR STYLING ---
+# --- SIDEBAR STYLING ---
 st.markdown("""
     <style>
-        /* Sidebar background and text */
-        [data-testid="stSidebar"] {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-        }
-
-        [data-testid="stSidebar"] input {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-        }
-
-        [data-testid="stSidebar"] button {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-        }
-
-        [data-testid="stSidebar"] .stMarkdown {
-            color: #000000 !important;
-        }
-
-        .hello-text {
-            color: black;
-            font-weight: bold;
-            font-size: 18px;
-        }
+    section[data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] input {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] .stTextInput > div > div > input {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] .stButton > button {
+        background-color: #d1f0d1 !important;
+        color: #000000 !important;
+    }
+    section[data-testid="stSidebar"] .stMarkdown {
+        color: #000000 !important;
+    }
+    div[data-testid="stSidebarUserContent"] p {
+        color: #000000 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 
 # --- LOGO ---
 logo = Image.open("logo.png")
 st.sidebar.image(logo, use_container_width=True)
 
 # --- SIDEBAR INPUT ---
-st.sidebar.title("Welcome to Sipx 💧")
+st.sidebar.title("Welcome to Sipx💧")
 user_name = st.sidebar.text_input("🧑 Your Name")
 user_email = st.sidebar.text_input("📧 Your Email")
 
@@ -83,4 +82,5 @@ if query:
             per_bottle = info["carton_price"] / info["bottles_per_carton"]
             st.markdown(f"- {size}: ₹{info['carton_price']}/carton ({info['bottles_per_carton']} bottles) — ₹{per_bottle:.2f}/bottle")
         st.caption("Prices may vary based on order quantity.")
+        
 
