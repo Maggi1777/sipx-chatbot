@@ -29,7 +29,7 @@ st.markdown("""
 # --- Sidebar content ---
 with st.sidebar:
     try:
-        logo = Image.open("logo.png")
+        logo = Image.open("logo1.svg")
         st.image(logo, use_container_width=True)
     except:
         st.warning("Logo not found. Upload 'logo.png' to display branding.")
